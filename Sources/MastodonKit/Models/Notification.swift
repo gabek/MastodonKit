@@ -2,7 +2,7 @@ import Foundation
 
 public struct Notification {
     /// The notification ID.
-    public let id: Int
+    public let id: String
     /// The notification type.
     public let type: NotificationType
     /// The time the notification was created.
@@ -16,7 +16,7 @@ public struct Notification {
 extension Notification {
     init?(from dictionary: JSONDictionary) {
         guard
-            let id = dictionary["id"] as? Int,
+            let id = dictionary["id"] as? String,
             let typeString = dictionary["type"] as? String,
             let createdAtString = dictionary["created_at"] as? String,
             let createdAt = DateFormatter.mastodonFormatter.date(from: createdAtString),

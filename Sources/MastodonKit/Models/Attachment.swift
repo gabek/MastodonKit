@@ -2,7 +2,7 @@ import Foundation
 
 public struct Attachment {
     /// ID of the attachment.
-    public let id: Int
+    public let id: String
     /// Type of the attachment.
     public let type: AttachmentType
     /// URL of the locally hosted version of the image.
@@ -18,7 +18,7 @@ public struct Attachment {
 extension Attachment {
     init?(from dictionary: JSONDictionary) {
         guard
-            let id = dictionary["id"] as? Int,
+            let id = dictionary["id"] as? String,
             let typeString = dictionary["type"] as? String,
             let url = dictionary["url"] as? String,
             let previewURL = dictionary["preview_url"] as? String

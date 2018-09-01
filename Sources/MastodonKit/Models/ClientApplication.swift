@@ -2,7 +2,7 @@ import Foundation
 
 public struct ClientApplication {
     /// The application ID.
-    public let id: Int
+    public let id: String
     /// Where the user should be redirected after authorization.
     public let redirectURI: String
     /// The application client ID.
@@ -14,7 +14,7 @@ public struct ClientApplication {
 extension ClientApplication {
     init?(from dictionary: JSONDictionary) {
         guard
-            let id = dictionary["id"] as? Int,
+            let id = dictionary["id"] as? String,
             let redirectURI = dictionary["redirect_uri"] as? String,
             let clientID = dictionary["client_id"] as? String,
             let clientSecret = dictionary["client_secret"] as? String

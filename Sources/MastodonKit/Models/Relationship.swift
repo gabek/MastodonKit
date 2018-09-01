@@ -2,7 +2,7 @@ import Foundation
 
 public struct Relationship {
     /// Target account id.
-    public let id: Int
+    public let id: String
     /// Whether the user is currently following the account.
     public let following: Bool
     /// Whether the user is currently being followed by the account.
@@ -18,7 +18,7 @@ public struct Relationship {
 extension Relationship {
     init?(from dictionary: JSONDictionary) {
         guard
-            let id = dictionary["id"] as? Int,
+            let id = dictionary["id"] as? String,
             let following = dictionary["following"] as? Bool,
             let followedBy = dictionary["followed_by"] as? Bool,
             let blocking = dictionary["blocking"] as? Bool,

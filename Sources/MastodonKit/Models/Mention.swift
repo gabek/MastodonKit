@@ -2,7 +2,7 @@ import Foundation
 
 public struct Mention {
     /// Account ID.
-    public let id: Int
+    public let id: String
     /// The username of the account.
     public let username: String
     /// Equals username for local users, includes @domain for remote ones.
@@ -14,7 +14,7 @@ public struct Mention {
 extension Mention {
     init?(from dictionary: JSONDictionary) {
         guard
-            let id = dictionary["id"] as? Int,
+            let id = dictionary["id"] as? String,
             let username = dictionary["username"] as? String,
             let acct = dictionary["acct"] as? String,
             let url = dictionary["url"] as? String

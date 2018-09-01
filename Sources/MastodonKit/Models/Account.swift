@@ -2,7 +2,7 @@ import Foundation
 
 public struct Account {
     /// The ID of the account.
-    public let id: Int
+    public let id: String
     /// The username of the account.
     public let username: String
     /// Equals username for local users, includes @domain for remote ones.
@@ -36,7 +36,7 @@ public struct Account {
 extension Account {
     init?(from dictionary: JSONDictionary) {
         guard
-            let id = dictionary["id"] as? Int,
+            let id = dictionary["id"] as? String,
             let username = dictionary["username"] as? String,
             let acct = dictionary["acct"] as? String,
             let displayName = dictionary["display_name"] as? String,

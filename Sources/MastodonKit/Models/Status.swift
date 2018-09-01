@@ -2,7 +2,7 @@ import Foundation
 
 public struct Status {
     /// The ID of the status.
-    public let id: Int
+    public let id: String
     /// A Fediverse-unique resource ID.
     public let uri: String
     /// URL to the status page (can be remote).
@@ -10,9 +10,9 @@ public struct Status {
     /// The Account which posted the status.
     public let account: Account
     /// null or the ID of the status it replies to.
-    public let inReplyToID: Int?
+    public let inReplyToID: String?
     /// null or the ID of the account it replies to.
-    public let inReplyToAccountID: Int?
+    public let inReplyToAccountID: String?
     /// Body of the status; this will contain HTML (remote HTML already sanitized).
     public let content: String
     /// The time the status was created.
@@ -50,7 +50,7 @@ public struct Status {
 extension Status {
     init?(from dictionary: JSONDictionary) {
         guard
-            let id = dictionary["id"] as? Int,
+            let id = dictionary["id"] as? String,
             let uri = dictionary["uri"] as? String,
             let urlString = dictionary["url"] as? String,
             let url = URL(string: urlString),
@@ -74,8 +74,8 @@ extension Status {
         self.uri = uri
         self.url = url
         self.account = account
-        self.inReplyToID = dictionary["in_reply_to_id"] as? Int
-        self.inReplyToAccountID = dictionary["in_reply_to_account_id"] as? Int
+        self.inReplyToID = dictionary["in_reply_to_id"] as? String
+        self.inReplyToAccountID = dictionary["in_reply_to_account_id"] as? String
         self.content = content
         self.createdAt = createdAt
         self.reblogsCount = reblogsCount

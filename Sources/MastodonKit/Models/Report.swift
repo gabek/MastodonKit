@@ -2,7 +2,7 @@ import Foundation
 
 public struct Report {
     /// The ID of the report.
-    public let id: Int
+    public let id: String
     /// The action taken in response to the report.
     public let actionTaken: String
 }
@@ -10,7 +10,7 @@ public struct Report {
 extension Report {
     init?(from dictionary: JSONDictionary) {
         guard
-            let id = dictionary["id"] as? Int,
+            let id = dictionary["id"] as? String,
             let actionTaken = dictionary["action_taken"] as? String
             else {
                 return nil
