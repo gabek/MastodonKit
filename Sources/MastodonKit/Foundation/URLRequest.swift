@@ -8,6 +8,6 @@ extension URLRequest {
         httpBody = request.method.httpBody
 
         setValue(accessToken.flatMap { "Bearer \($0)" }, forHTTPHeaderField: "Authorization")
-        setValue(request.method.contentType, forHTTPHeaderField: "Content-Type")
+//        setValue(request.method.contentType, forHTTPHeaderField: "Content-Type")
     }
 }

@@ -11,6 +11,12 @@ public struct Timelines {
 
         return TimelineRequest(path: "/api/v1/timelines/home", method: method, parse: TimelineRequest.parser)
     }
+    
+    public static func homeStream() -> TimelineRequest {
+        let method = HTTPMethod.get(Payload.parameters(nil))
+        
+        return TimelineRequest(path: "/api/v1/streaming/home", method: method, parse: TimelineRequest.parser)
+    }
 
     /// Retrieves the public timeline.
     ///
@@ -26,6 +32,12 @@ public struct Timelines {
         return TimelineRequest(path: "/api/v1/timelines/public", method: method, parse: TimelineRequest.parser)
     }
 
+    public static func `publicStream`(local: Bool? = nil) -> TimelineRequest {
+        let localParameters = [Parameter(name: "local", value: local.flatMap(trueOrNil))]
+        let method = HTTPMethod.get(Payload.parameters(localParameters))
+        
+        return TimelineRequest(path: "/api/v1/streaming/public", method: method, parse: TimelineRequest.parser)
+    }
     /// Retrieves a tag timeline.
     ///
     /// - Parameters:

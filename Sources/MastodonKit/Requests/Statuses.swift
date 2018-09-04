@@ -61,7 +61,7 @@ public struct Statuses {
     ///   - spoilerText: the text to be shown as a warning before the actual content.
     ///   - visibility: The status' visibility.
     /// - Returns: Request for `Status`.
-    public static func create(status: String, replyToID: Int? = nil, mediaIDs: [Int] = [], sensitive: Bool? = nil, spoilerText: String? = nil, visibility: Visibility = .public) -> StatusRequest {
+    public static func create(status: String, replyToID: String? = nil, mediaIDs: [Int] = [], sensitive: Bool? = nil, spoilerText: String? = nil, visibility: Visibility = .public) -> StatusRequest {
         let parameters = [
             Parameter(name: "status", value: status),
             Parameter(name: "in_reply_to_id", value: replyToID.flatMap(toOptionalString)),
@@ -86,7 +86,7 @@ public struct Statuses {
     ///
     /// - Parameter id: The status id.
     /// - Returns: Request for `Status`.
-    public static func reblog(id: Int) -> StatusRequest {
+    public static func reblog(id: String) -> StatusRequest {
         return StatusRequest(path: "/api/v1/statuses/\(id)/reblog", method: .post(.empty), parse: StatusRequest.parser)
     }
 
@@ -94,7 +94,7 @@ public struct Statuses {
     ///
     /// - Parameter id: The status id.
     /// - Returns: Request for `Status`.
-    public static func unreblog(id: Int) -> StatusRequest {
+    public static func unreblog(id: String) -> StatusRequest {
         return StatusRequest(path: "/api/v1/statuses/\(id)/unreblog", method: .post(.empty), parse: StatusRequest.parser)
     }
 
@@ -102,7 +102,7 @@ public struct Statuses {
     ///
     /// - Parameter id: The status id.
     /// - Returns: Request for `Status`.
-    public static func favourite(id: Int) -> StatusRequest {
+    public static func favourite(id: String) -> StatusRequest {
         return StatusRequest(path: "/api/v1/statuses/\(id)/favourite", method: .post(.empty), parse: StatusRequest.parser)
     }
 
@@ -110,7 +110,7 @@ public struct Statuses {
     ///
     /// - Parameter id: The status id.
     /// - Returns: Request for `Status`.
-    public static func unfavourite(id: Int) -> StatusRequest {
+    public static func unfavourite(id: String) -> StatusRequest {
         return StatusRequest(path: "/api/v1/statuses/\(id)/unfavourite", method: .post(.empty), parse: StatusRequest.parser)
     }
 }
