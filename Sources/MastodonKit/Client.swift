@@ -5,8 +5,11 @@ public final class Client: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
     public var accessToken: String?
     lazy var session = URLSession.shared
     var streamSession: URLSession?
-    private var streamCallback: ((Status?, Error?) -> Void)?
-    
+    public var statusCallback: ((Status?, Error?) -> Void)?
+    public var errorCallback: ((Error) -> Void)?
+    public var notificationCallback: ((Notification?, Error?) -> Void)?
+    public var deleteCallback: ((String) -> Void)?
+
     public init(baseURL: String, accessToken: String? = nil) {
         self.baseURL = baseURL
         self.accessToken = accessToken
@@ -55,22 +58,13 @@ public final class Client: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
     
     /// STREAMING
     private var streamingTask: URLSessionDataTask? = nil
-    var outputStream: OutputStream? = nil
-
-    private func closeStream() {
-        if let stream = self.outputStream {
-            stream.close()
-            self.outputStream = nil
-        }
-    }
     
-    public func stream<Model>(_ request: Request<Model>, completion: @escaping (Status?, Error?) -> Void) {
-        streamCallback = completion
+    public func stream<Model>(_ request: Request<Model>) {
         guard
             let components = URLComponents(baseURL: baseURL, request: request),
-            let requestURL = URL(string: "https://mastodon.social/api/v1/streaming/public")//components.url
+            let requestURL = components.url
             else {
-                completion(nil, ClientError.malformedURL)
+                //completion(nil, ClientError.malformedURL)
                 return
         }
         
@@ -84,19 +78,42 @@ public final class Client: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
     }
     
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        //NSLog("task data: %@", data as NSData)
+        // TODO: Pull out the "event:" type to determine if it's a update, notification or delete.
         guard let stringData = String(data: data, encoding: .utf8) else { return }
+        
+        if stringData.first == ":" {
+            return
+        }
+        
+        guard let eventTypeSubstring = stringData.split(separator: "\n").first?.split(separator: " ").last else { return }
+        let streamEventType = String(eventTypeSubstring)
+        
         guard let index = stringData.range(of: "data: ")?.upperBound else { return }
         let payloadString = stringData.substring(from: index)
+        
+        if streamEventType == "delete" {
+            deleteCallback?(payloadString.trimmingCharacters(in: .whitespacesAndNewlines))
+            return
+        }
+        
         guard let updateData = payloadString.data(using: .utf8) else { return }
         guard let jsonObject = try? JSONSerialization.jsonObject(with: updateData, options: []) as? JSONDictionary else { return }
-        guard let model = Status(from: jsonObject!) else { return }
-        streamCallback?(model, nil)
+        
+        if let modelObject = Status(from: jsonObject!) {
+            statusCallback?(modelObject, nil)
+        } else if let modelObject = Notification(from: jsonObject!) {
+            notificationCallback?(modelObject, nil)
+        }
+    }
+    
+    public func stopStream() {
+        streamSession?.finishTasksAndInvalidate()
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let error = error as NSError? {
             NSLog("task error: %@ / %d", error.domain, error.code)
+            errorCallback?(error)
         } else {
             NSLog("task complete")
         }

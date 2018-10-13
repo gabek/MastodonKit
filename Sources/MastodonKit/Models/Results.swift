@@ -11,8 +11,8 @@ public struct Results {
 
 extension Results {
     init?(from dictionary: JSONDictionary) {
-        self.accounts = dictionary["accounts"].flatMap(asJSONDictionaries)?.flatMap(Account.init)
-        self.statuses = dictionary["statuses"].flatMap(asJSONDictionaries)?.flatMap(Status.init)
+        self.accounts = dictionary["accounts"].flatMap(asJSONDictionaries)?.compactMap(Account.init)
+        self.statuses = dictionary["statuses"].flatMap(asJSONDictionaries)?.compactMap(Status.init)
         self.hashtags = dictionary["hashtags"] as? [String]
     }
 }

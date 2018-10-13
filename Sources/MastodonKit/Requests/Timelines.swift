@@ -15,7 +15,7 @@ public struct Timelines {
     public static func homeStream() -> TimelineRequest {
         let method = HTTPMethod.get(Payload.parameters(nil))
         
-        return TimelineRequest(path: "/api/v1/streaming/home", method: method, parse: TimelineRequest.parser)
+        return TimelineRequest(path: "/api/v1/streaming/user", method: method, parse: TimelineRequest.parser)
     }
 
     /// Retrieves the public timeline.
@@ -35,8 +35,8 @@ public struct Timelines {
     public static func `publicStream`(local: Bool? = nil) -> TimelineRequest {
         let localParameters = [Parameter(name: "local", value: local.flatMap(trueOrNil))]
         let method = HTTPMethod.get(Payload.parameters(localParameters))
-        
-        return TimelineRequest(path: "/api/v1/streaming/public", method: method, parse: TimelineRequest.parser)
+        let path = (local ?? false) ? "/api/v1/streaming/public/local" : "/api/v1/streaming/public"
+        return TimelineRequest(path: path, method: method, parse: TimelineRequest.parser)
     }
     /// Retrieves a tag timeline.
     ///
@@ -51,5 +51,14 @@ public struct Timelines {
         let method = HTTPMethod.get(Payload.parameters(localParameters + rangeParameters))
 
         return TimelineRequest(path: "/api/v1/timelines/tag/\(hashtag)", method: method, parse: TimelineRequest.parser)
+    }
+    
+    public static func tagStream(_ hashtag: String, local: Bool? = nil, range: RequestRange = .default) -> TimelineRequest {
+        let rangeParameters = range.parameters(limit: between(1, and: 40, fallback: 20)) ?? []
+        let localParameters = [Parameter(name: "local", value: local.flatMap(trueOrNil))]
+        let tagParameters = [Parameter(name: "tag", value: hashtag)]
+        let method = HTTPMethod.get(Payload.parameters(tagParameters + localParameters + rangeParameters))
+        
+        return TimelineRequest(path: "/api/v1/streaming/hashtag", method: method, parse: TimelineRequest.parser)
     }
 }

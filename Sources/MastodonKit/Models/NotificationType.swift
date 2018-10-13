@@ -14,7 +14,7 @@ public enum NotificationType {
 }
 
 extension NotificationType {
-    init(string: String) {
+    public init(string: String) {
         switch string {
         case "mention": self = .mention
         case "reblog": self = .reblog

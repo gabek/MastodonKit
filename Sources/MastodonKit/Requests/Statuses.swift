@@ -5,7 +5,7 @@ public struct Statuses {
     ///
     /// - Parameter id: The status id.
     /// - Returns: Request for `Status`.
-    public static func status(id: Int) -> StatusRequest {
+    public static func status(id: String) -> StatusRequest {
         return StatusRequest(path: "/api/v1/statuses/\(id)", parse: StatusRequest.parser)
     }
 
@@ -13,7 +13,7 @@ public struct Statuses {
     ///
     /// - Parameter id: The status id.
     /// - Returns: Request for `Context`.
-    public static func context(id: Int) -> ContextRequest {
+    public static func context(id: String) -> ContextRequest {
         return ContextRequest(path: "/api/v1/statuses/\(id)/context", parse: ContextRequest.parser)
     }
 
@@ -78,7 +78,7 @@ public struct Statuses {
     ///
     /// - Parameter id: The status id.
     /// - Returns: Request for `Status`.
-    public static func delete(id: Int) -> StatusRequest {
+    public static func delete(id: String) -> StatusRequest {
         return StatusRequest(path: "/api/v1/statuses/\(id)", method: .delete, parse: StatusRequest.parser)
     }
 

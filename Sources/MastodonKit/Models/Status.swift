@@ -21,12 +21,16 @@ public struct Status {
     public let reblogsCount: Int
     /// The number of favourites for the status.
     public let favouritesCount: Int
+    /// The number of replies for the setatus.
+    public let repliesCount: Int
     /// Whether the authenticated user has reblogged the status.
     public let reblogged: Bool?
     /// Whether the authenticated user has favourited the status.
     public let favourited: Bool?
     /// Whether media attachments should be hidden by default.
     public let sensitive: Bool?
+    /// Whether the authenticated user has muted the conversation this status from
+    public let muted: Bool?
     /// If not empty, warning text that should be displayed before the actual content.
     public let spoilerText: String
     /// The visibility of the status.
@@ -39,12 +43,17 @@ public struct Status {
     public let tags: [Tag]
     /// Application from which the status was posted.
     public let application: Application?
+    /// An array of emoji.
+    public let emoji: [Emoji]
+    public let language: String?
+    public let pinned: Bool?
+    
     /// The reblogged Status
     public var reblog: Status? {
         return reblogWrapper.first?.flatMap { $0 }
     }
 
-    var reblogWrapper: [Status?]
+    public var reblogWrapper: [Status?]
 }
 
 extension Status {
@@ -61,11 +70,14 @@ extension Status {
             let createdAt = DateFormatter.mastodonFormatter.date(from: createdAtString),
             let reblogsCount = dictionary["reblogs_count"] as? Int,
             let favouritesCount = dictionary["favourites_count"] as? Int,
+            let repliesCount = dictionary["replies_count"] as? Int,
             let spoilerText = dictionary["spoiler_text"] as? String,
             let visibilityString = dictionary["visibility"] as? String,
             let attachmentsArray = dictionary["media_attachments"] as? [JSONDictionary],
             let mentionsArray = dictionary["mentions"] as? [JSONDictionary],
-            let tagsArray = dictionary["tags"] as? [JSONDictionary]
+            let tagsArray = dictionary["tags"] as? [JSONDictionary],
+            let emojiArray = dictionary["emojis"] as? [JSONDictionary],
+            let language = dictionary["language"] as? String
             else {
                 return nil
         }
@@ -80,6 +92,7 @@ extension Status {
         self.createdAt = createdAt
         self.reblogsCount = reblogsCount
         self.favouritesCount = favouritesCount
+        self.repliesCount = repliesCount
         self.reblogged = dictionary["reblogged"] as? Bool
         self.favourited = dictionary["favourited"] as? Bool
         self.sensitive = dictionary["sensitive"] as? Bool
@@ -87,8 +100,13 @@ extension Status {
         self.visibility = Visibility(string: visibilityString)
         self.reblogWrapper = [dictionary["reblog"].flatMap(asJSONDictionary).flatMap(Status.init)]
         self.application = dictionary["application"].flatMap(asJSONDictionary).flatMap(Application.init)
-        self.mediaAttachments = attachmentsArray.flatMap(Attachment.init)
-        self.mentions = mentionsArray.flatMap(Mention.init)
-        self.tags = tagsArray.flatMap(Tag.init)
+        self.mediaAttachments = attachmentsArray.compactMap(Attachment.init)
+        self.mentions = mentionsArray.compactMap(Mention.init)
+        self.tags = tagsArray.compactMap(Tag.init)
+        self.emoji = emojiArray.compactMap(Emoji.init)
+        self.language = language
+        self.muted = dictionary["muted"] as? Bool ?? false
+        self.pinned = dictionary["pinned"] as? Bool ?? false
+        
     }
 }

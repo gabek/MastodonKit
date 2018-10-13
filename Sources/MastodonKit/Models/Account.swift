@@ -31,6 +31,10 @@ public struct Account {
     public let followingCount: Int
     /// The number of statuses the account has made.
     public let statusesCount: Int
+    /// Boolean for when the account is marked as a bot.
+    public let isBot: Bool
+    /// Metadata fields.
+    public let metaInfo: [[String:Any]]
 }
 
 extension Account {
@@ -51,7 +55,9 @@ extension Account {
             let headerStatic = dictionary["header_static"] as? String,
             let followersCount = dictionary["followers_count"] as? Int,
             let followingCount = dictionary["following_count"] as? Int,
-            let statusesCount = dictionary["statuses_count"] as? Int
+            let statusesCount = dictionary["statuses_count"] as? Int,
+            let isBot = dictionary["bot"] as? Bool,
+            let metaInfo = dictionary["fields"] as? [[String:Any]]
             else {
                 return nil
         }
@@ -71,5 +77,7 @@ extension Account {
         self.followersCount = followersCount
         self.followingCount = followingCount
         self.statusesCount = statusesCount
+        self.isBot = isBot
+        self.metaInfo = metaInfo
     }
 }
