@@ -79,7 +79,8 @@ public struct Statuses {
     /// - Parameter id: The status id.
     /// - Returns: Request for `Status`.
     public static func delete(id: String) -> StatusRequest {
-        return StatusRequest(path: "/api/v1/statuses/\(id)", method: .delete, parse: StatusRequest.parser)
+        let method = HTTPMethod.delete(Payload.empty)
+        return StatusRequest(path: "/api/v1/statuses/\(id)", method: method, parse: StatusRequest.parser)
     }
 
     /// Reblogs a status.

@@ -6,7 +6,7 @@ public struct Status {
     /// A Fediverse-unique resource ID.
     public let uri: String
     /// URL to the status page (can be remote).
-    public let url: URL
+    public var url: URL? = nil
     /// The Account which posted the status.
     public let account: Account
     /// null or the ID of the status it replies to.
@@ -61,8 +61,6 @@ extension Status {
         guard
             let id = dictionary["id"] as? String,
             let uri = dictionary["uri"] as? String,
-            let urlString = dictionary["url"] as? String,
-            let url = URL(string: urlString),
             let accountDictionary = dictionary["account"] as? JSONDictionary,
             let account = Account(from: accountDictionary),
             let content = dictionary["content"] as? String,
@@ -76,15 +74,17 @@ extension Status {
             let attachmentsArray = dictionary["media_attachments"] as? [JSONDictionary],
             let mentionsArray = dictionary["mentions"] as? [JSONDictionary],
             let tagsArray = dictionary["tags"] as? [JSONDictionary],
-            let emojiArray = dictionary["emojis"] as? [JSONDictionary],
-            let language = dictionary["language"] as? String
+            let emojiArray = dictionary["emojis"] as? [JSONDictionary]
             else {
                 return nil
         }
 
+        if let urlString = dictionary["url"] as? String, let url = URL(string: urlString) {
+            self.url = url
+        }
+
         self.id = id
         self.uri = uri
-        self.url = url
         self.account = account
         self.inReplyToID = dictionary["in_reply_to_id"] as? String
         self.inReplyToAccountID = dictionary["in_reply_to_account_id"] as? String
@@ -104,9 +104,8 @@ extension Status {
         self.mentions = mentionsArray.compactMap(Mention.init)
         self.tags = tagsArray.compactMap(Tag.init)
         self.emoji = emojiArray.compactMap(Emoji.init)
-        self.language = language
+        self.language = dictionary["language"] as? String
         self.muted = dictionary["muted"] as? Bool ?? false
         self.pinned = dictionary["pinned"] as? Bool ?? false
-        
     }
 }

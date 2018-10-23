@@ -17,6 +17,7 @@ public typealias ReportsRequest = Request<[Report]>
 public typealias ResultsRequest = Request<Results>
 public typealias StatusRequest = Request<Status>
 public typealias TimelineRequest = Request<[Status]>
+public typealias BlocksRequest = Request<[Block]>
 
 typealias JSONObject = Any
 typealias JSONDictionary = [String: JSONObject]
@@ -75,6 +76,13 @@ extension Request where Model == Instance {
     }
 }
 
+extension Request where Model == [Block] {
+    static func parser(json: JSONObject) -> [Block] {
+        guard let array = json as? [String] else { return [] }
+        return array.compactMap({Block(from: $0)})
+    }
+}
+
 // MARK: LoginSettingsRequest
 
 extension Request where Model == LoginSettings {
@@ -84,7 +92,7 @@ extension Request where Model == LoginSettings {
     }
 }
 
-// MARK: NotificationRequest
+// MARK: NotificationRequestx
 
 extension Request where Model == Notification {
     static func parser(json: JSONObject) -> Notification? {
