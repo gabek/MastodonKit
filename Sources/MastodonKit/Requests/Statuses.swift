@@ -61,7 +61,7 @@ public struct Statuses {
     ///   - spoilerText: the text to be shown as a warning before the actual content.
     ///   - visibility: The status' visibility.
     /// - Returns: Request for `Status`.
-    public static func create(status: String, replyToID: String? = nil, mediaIDs: [Int] = [], sensitive: Bool? = nil, spoilerText: String? = nil, visibility: Visibility = .public) -> StatusRequest {
+    public static func create(status: String, replyToID: String? = nil, mediaIDs: [String] = [], sensitive: Bool? = nil, spoilerText: String? = nil, visibility: Visibility = .public) -> StatusRequest {
         let parameters = [
             Parameter(name: "status", value: status),
             Parameter(name: "in_reply_to_id", value: replyToID.flatMap(toOptionalString)),

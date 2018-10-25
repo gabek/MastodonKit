@@ -1,3 +1,11 @@
+//
+//  MediaAttachment.swift
+//  MastodonKit
+//
+//  Created by Ornithologist Coder on 5/9/17.
+//  Copyright © 2017 MastodonKit. All rights reserved.
+//
+
 import Foundation
 
 public enum MediaAttachment {
@@ -20,7 +28,7 @@ extension MediaAttachment {
         case .other(let data, _, _): return data
         }
     }
-
+    
     var fileName: String {
         switch self {
         case .jpeg: return "file.jpg"
@@ -29,7 +37,7 @@ extension MediaAttachment {
         case .other(_, let fileExtension, _): return "file.\(fileExtension)"
         }
     }
-
+    
     var mimeType: String {
         switch self {
         case .jpeg: return "image/jpg"
@@ -38,8 +46,8 @@ extension MediaAttachment {
         case .other(_, _, let mimeType): return mimeType
         }
     }
-
+    
     var base64EncondedString: String? {
-        return data.flatMap { "data:" + mimeType + ";base64," + $0.base64EncodedString() }
+        return data.map { "data:" + mimeType + ";base64," + $0.base64EncodedString() }
     }
 }
