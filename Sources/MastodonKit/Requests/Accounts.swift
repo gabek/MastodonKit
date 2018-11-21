@@ -70,11 +70,12 @@ public struct Accounts {
     ///   - excludeReplies: Skip statuses that reply to other statuses.
     ///   - range: The bounds used when requesting data from Mastodon.
     /// - Returns: Request for `[Status]`.
-    public static func statuses(id: String, mediaOnly: Bool? = nil, excludeReplies: Bool? = nil, range: RequestRange = .default) -> TimelineRequest {
+    public static func  statuses(id: String, mediaOnly: Bool? = nil, excludeReplies: Bool? = nil, pinned: Bool? = nil, range: RequestRange = .default) -> TimelineRequest {
         let rangeParameters = range.parameters(limit: between(1, and: 40, fallback: 20)) ?? []
         let parameters = rangeParameters + [
             Parameter(name: "only_media", value: mediaOnly.flatMap(trueOrNil)),
-            Parameter(name: "exclude_replies", value: excludeReplies.flatMap(trueOrNil))
+            Parameter(name: "exclude_replies", value: excludeReplies.flatMap(trueOrNil)),
+            Parameter(name: "pinned", value: String(pinned ?? false))
         ]
 
         let method = HTTPMethod.get(Payload.parameters(parameters))
@@ -155,5 +156,17 @@ public struct Accounts {
 
         let method = HTTPMethod.get(Payload.parameters(parameters))
         return AccountsRequest(path: "/api/v1/accounts/search", method: method, parse: AccountsRequest.parser)
+    }
+    
+    public static func authenticate(code: String, clientID: String, clientSecret: String, redirectURL: String) -> AccountsRequest {
+        let parameters = [
+            Parameter(name: "client_id", value: clientID),
+            Parameter(name: "client_secret", value: clientSecret),
+            Parameter(name: "grant_type", value: "authorization_code"),
+            Parameter(name: "code", value: code),
+            Parameter(name: "redirect_uri", value: redirectURL)
+        ]
+        let method = HTTPMethod.post(Payload.parameters(parameters))
+        return AccountsRequest(path: "/oauth/token", method: method, parse: AccountsRequest.parser)
     }
 }
