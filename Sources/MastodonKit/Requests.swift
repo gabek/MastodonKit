@@ -18,6 +18,7 @@ public typealias ResultsRequest = Request<Results>
 public typealias StatusRequest = Request<Status>
 public typealias TimelineRequest = Request<[Status]>
 public typealias BlocksRequest = Request<[Block]>
+public typealias FiltersRequest = Request<[Filter]>
 
 typealias JSONObject = Any
 typealias JSONDictionary = [String: JSONObject]
@@ -80,6 +81,13 @@ extension Request where Model == [Block] {
     static func parser(json: JSONObject) -> [Block] {
         guard let array = json as? [String] else { return [] }
         return array.compactMap({Block(from: $0)})
+    }
+}
+
+extension Request where Model == [Filter] {
+    static func parser(json: JSONObject) -> [Filter]? {
+        guard let array = json as? [JSONDictionary] else { return nil }
+        return array.compactMap({Filter(from: $0)})
     }
 }
 
