@@ -47,6 +47,7 @@ public struct Status {
     public let emoji: [Emoji]
     public let language: String?
     public let pinned: Bool?
+    public let card: Card?
     
     /// The reblogged Status
     public var reblog: Status? {
@@ -100,6 +101,7 @@ extension Status {
         self.visibility = Visibility(string: visibilityString)
         self.reblogWrapper = [dictionary["reblog"].flatMap(asJSONDictionary).flatMap(Status.init)]
         self.application = dictionary["application"].flatMap(asJSONDictionary).flatMap(Application.init)
+        self.card = dictionary["card"].flatMap(asJSONDictionary).flatMap(Card.init)
         self.mediaAttachments = attachmentsArray.compactMap(Attachment.init)
         self.mentions = mentionsArray.compactMap(Mention.init)
         self.tags = tagsArray.compactMap(Tag.init)
