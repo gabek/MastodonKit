@@ -2,7 +2,11 @@ import Foundation
 
 public final class Client: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     let baseURL: String
-    public var accessToken: String?
+    public var accessToken: String? {
+        didSet {
+            print("Set", accessToken)
+        }
+    }
     lazy var session = URLSession.shared
     var streamSession: URLSession?
     public var statusCallback: ((Status?, Error?) -> Void)?
@@ -80,7 +84,7 @@ public final class Client: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         // TODO: Pull out the "event:" type to determine if it's a update, notification or delete.
         guard let stringData = String(data: data, encoding: .utf8) else { return }
-        
+                
         if stringData.first == ":" {
             return
         }
@@ -107,7 +111,14 @@ public final class Client: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
     }
     
     public func stopStream() {
-        streamSession?.finishTasksAndInvalidate()
+        streamSession?.getTasksWithCompletionHandler({ (dataTask, uploadTask, downloadTask) in
+            dataTask.forEach({ (task) in
+                task.cancel()
+            })
+            
+        })
+        //streamSession?.invalidateAndCancel()
+        //streamingTask?.suspend()
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
