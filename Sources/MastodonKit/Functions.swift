@@ -33,14 +33,22 @@ func toOptionalString<A>(optional: A?) -> String? {
 }
 
 func toQueryItem(parameter: Parameter) -> URLQueryItem? {
-    guard let value = parameter.value else { return nil }
+    guard let value = parameter.value as? String else { return nil }
     return URLQueryItem(name: parameter.name, value: value)
 }
 
 func toString(parameter: Parameter) -> String? {
-    return parameter.value?
-        .addingPercentEncoding(withAllowedCharacters: .bodyAllowed)
-        .flatMap { value in "\(parameter.name)=\(value)" }
+    if let value = parameter.value as? String {
+        return value.addingPercentEncoding(withAllowedCharacters: .bodyAllowed).flatMap { value in "\(parameter.name)=\(value)" }
+    } else if let value = parameter.value as? [String] {
+        return value.reduce("") { result, value in
+            return "\(result ?? "")&\(parameter.name)[]=\(value)"
+        }
+    } else if let value = parameter.value as? Bool {
+        return "\(parameter.name)=\(value)"
+    }
+        
+    return nil
 }
 
 func trueOrNil(_ flag: Bool) -> String? {
