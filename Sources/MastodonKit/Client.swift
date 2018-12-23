@@ -19,9 +19,10 @@ public final class Client: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
         self.accessToken = accessToken
     }
 
-    public func run<Model>(_ request: Request<Model>, completion: @escaping (Model?, Error?, [AnyHashable : Any]?) -> Void) {
+    public func run<Model>(_ request: Request<Model>, host: String? = nil, completion: @escaping (Model?, Error?, [AnyHashable : Any]?) -> Void) {
+        var apiHostURL = host ?? baseURL
         guard
-            let components = URLComponents(baseURL: baseURL, request: request),
+            let components = URLComponents(baseURL: apiHostURL, request: request),
             let requestURL = components.url
             else {
                 completion(nil, ClientError.malformedURL, nil)
