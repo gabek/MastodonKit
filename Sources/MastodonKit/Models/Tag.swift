@@ -5,6 +5,12 @@ public struct Tag {
     public let name: String
     /// The URL of the hashtag.
     public let url: String
+    /// The last day used
+    public var day: Date?
+    /// Number of uses
+    public var uses: Int?
+    /// Accounts associated with this tag
+    public var accounts: [Account]?
 }
 
 extension Tag {
@@ -18,5 +24,15 @@ extension Tag {
 
         self.name = name
         self.url = url
+        
+        if let history = dictionary["history"] as? JSONDictionary {
+            if let dayString = history["day"] as? String {
+                self.day = DateFormatter.mastodonFormatter.date(from: dayString)
+            }
+            self.uses = history["uses"] as? Int
+            if let accountArray = dictionary["accounts"] as? [JSONDictionary] {
+                self.accounts = accountArray.compactMap({ return Account(from: $0) })
+            }
+        }
     }
 }
