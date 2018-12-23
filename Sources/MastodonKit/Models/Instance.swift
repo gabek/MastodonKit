@@ -11,6 +11,10 @@ public struct Instance {
     public let email: String
     /// The Mastodon version used by instance (as of version 1.3).
     public let version: String?
+    /// Thumbnail for the instance
+    public let thumbnail: String?
+    /// Admin account for the instance
+    public let admin: Account?
 }
 
 extension Instance {
@@ -29,5 +33,7 @@ extension Instance {
         self.description = description
         self.email = email
         self.version = dictionary["version"] as? String
+        self.thumbnail = dictionary["thumbnail"] as? String
+        self.admin = dictionary["contact_account"].flatMap(asJSONDictionary).flatMap(Account.init)
     }
 }
