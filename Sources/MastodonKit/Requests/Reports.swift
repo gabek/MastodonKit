@@ -15,9 +15,9 @@ public struct Reports {
     ///   - statusIDs: The IDs of statuses to report.
     ///   - reason: A comment to associate with the report.
     /// - Returns: Request for `Report`.
-    public static func report(accountID: Int, statusIDs: [Int], reason: String) -> ReportRequest {
+    public static func report(accountID: String, statusIDs: [String], reason: String) -> ReportRequest {
         let parameters = [
-            Parameter(name: "account_id", value: String(accountID)),
+            Parameter(name: "account_id", value: accountID),
             Parameter(name: "comment", value: reason)
             ] + statusIDs.map(toArrayOfParameters(withName: "status_ids"))
 
