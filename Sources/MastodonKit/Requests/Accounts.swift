@@ -23,15 +23,39 @@ public struct Accounts {
     ///   - note: A new biography for the user.
     ///   - avatar: The media attachment to display as the user's avatar.
     ///   - header: The media attachment to display as the user's header image.
+    ///   - metadata: The metadata fields associated to this user.
     /// - Returns: Request for `Account`.
-    public static func updateCurrentUser(displayName: String? = nil, note: String? = nil, avatar: MediaAttachment? = nil, header: MediaAttachment? = nil) -> AccountRequest {
-        let parameters = [
+    public static func updateCurrentUser(displayName: String? = nil, note: String? = nil, avatar: MediaAttachment? = nil, header: MediaAttachment? = nil, metadata: [AccountMetadataField]? = nil) -> AccountRequest {
+        var enumeratedMetadataFields = [Int:[String?:String?]]()
+        if let metadata = metadata {
+            for field in metadata {
+                enumeratedMetadataFields[field.number] = [field.name : field.value]
+            }
+        }
+        
+        var parameters = [
             Parameter(name: "display_name", value: displayName),
             Parameter(name: "note", value: note),
             Parameter(name: "avatar", value: avatar?.base64EncondedString),
-            Parameter(name: "header", value: header?.base64EncondedString)
+            Parameter(name: "header", value: header?.base64EncondedString),
         ]
 
+        let method = HTTPMethod.patch(Payload.parameters(parameters))
+        return AccountRequest(path: "/api/v1/accounts/update_credentials", method: method, parse: AccountRequest.parser)
+    }
+    
+    public static func updateMetadataFields(_ fields: [AccountMetadataField]) -> AccountRequest {
+        var parameters = [Parameter]()
+        
+        for field in fields.sorted(by: { (f1, f2) -> Bool in
+            return f1.number < f2.number
+        }) {
+            parameters.append(contentsOf: [
+                Parameter(name: "fields_attributes[\(field.number)][name]", value: field.name),
+                Parameter(name: "fields_attributes[\(field.number)][value]", value: field.value),
+            ])
+        }
+        
         let method = HTTPMethod.patch(Payload.parameters(parameters))
         return AccountRequest(path: "/api/v1/accounts/update_credentials", method: method, parse: AccountRequest.parser)
     }
