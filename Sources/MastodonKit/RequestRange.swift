@@ -3,6 +3,7 @@ import Foundation
 public enum RequestRange {
     /// Gets a list with IDs less than or equal this value.
     case max(id: String, limit: Int?)
+    case min(id: String, limit: Int?)
     /// Gets a list with IDs greater than this value.
     case since(id: String, limit: Int?)
     /// Sets the maximum number of entities to get.
@@ -17,6 +18,11 @@ extension RequestRange {
         case .max(let id, let limit):
             return [
                 Parameter(name: "max_id", value: id),
+                Parameter(name: "limit", value: limit.flatMap(f).flatMap(toOptionalString))
+            ]
+        case .min(let id, let limit):
+            return [
+                Parameter(name: "min_id", value: id),
                 Parameter(name: "limit", value: limit.flatMap(f).flatMap(toOptionalString))
             ]
         case .since(let id, let limit):
