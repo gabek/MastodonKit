@@ -114,4 +114,20 @@ public struct Statuses {
     public static func unfavourite(id: String) -> StatusRequest {
         return StatusRequest(path: "/api/v1/statuses/\(id)/unfavourite", method: .post(.empty), parse: StatusRequest.parser)
     }
+    
+    /// Mutes a status.
+    ///
+    /// - Parameter id: The status id.
+    /// - Returns: Request for `Status`.
+    public static func mute(id: String) -> StatusRequest {
+        return StatusRequest(path: "/api/v1/statuses/\(id)/mute", method: .post(.empty), parse: StatusRequest.parser)
+    }
+    
+    /// Unmutes a status.
+    ///
+    /// - Parameter id: The status id.
+    /// - Returns: Request for `Status`.
+    public static func unmute(id: String) -> StatusRequest {
+        return StatusRequest(path: "/api/v1/statuses/\(id)/unmute", method: .post(.empty), parse: StatusRequest.parser)
+    }
 }
